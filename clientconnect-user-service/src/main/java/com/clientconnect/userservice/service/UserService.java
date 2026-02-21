@@ -38,4 +38,21 @@ public class UserService {
     public void deleteUser(Long id){
         userRepository.deleteById(id);
     }
+    public User completeProfile(String email, User updatedUser) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setFullName(updatedUser.getFullName());
+        user.setPhone(updatedUser.getPhone());
+        user.setAddress(updatedUser.getAddress());
+        user.setProfileCompleted(true);
+
+        return userRepository.save(user);
+    }
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
 }

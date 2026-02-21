@@ -17,5 +17,7 @@ public interface LeadRepository extends MongoRepository<Lead, String> {
     List<Lead> findByAssignedToAndPhoneContaining(String assignedTo, String phone);
     List<Lead> findByAssignedToAndEmailContaining(String assignedTo, String email);
     List<Lead> findByAssignedToAndNameContainingIgnoreCase(String assignedTo, String name);
+    List<Lead> findByAssignedToOrCreatedBy(String assignedTo, String createdBy);
+
     
 }

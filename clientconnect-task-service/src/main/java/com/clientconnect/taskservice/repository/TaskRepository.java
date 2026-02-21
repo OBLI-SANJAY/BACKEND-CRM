@@ -8,4 +8,6 @@ import java.util.List;
 public interface TaskRepository extends MongoRepository<Task, String> {
 
     List<Task> findByAssignedTo(String email);
+    List<Task> findByAssignedToOrCreatedBy(String assignedTo, String createdBy);
+
 }

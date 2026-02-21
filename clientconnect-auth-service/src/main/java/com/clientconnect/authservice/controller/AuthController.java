@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.clientconnect.authservice.client.UserServiceClient;
+import com.clientconnect.authservice.dto.UserProfileRequest;
 import com.clientconnect.authservice.entity.User;
 import com.clientconnect.authservice.repository.UserRepository;
 import com.clientconnect.authservice.security.JwtUtil;
@@ -15,18 +17,23 @@ import java.util.List;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+	
+	private final UserServiceClient userServiceClient;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
     public AuthController(UserRepository userRepository,
-                          PasswordEncoder passwordEncoder,
-                          JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
-    }
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil,
+            UserServiceClient userServiceClient) {
+this.userRepository = userRepository;
+this.passwordEncoder = passwordEncoder;
+this.jwtUtil = jwtUtil;
+this.userServiceClient = userServiceClient;
+}
+
     @GetMapping("/managers")
     public List<User> getAllManagers(
             @RequestHeader("X-User-Role") String role) {
@@ -52,22 +59,42 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody Map<String, Object> request) {
 
-        // 🔥 CHECK IF USER ALREADY EXISTS
-        if (userRepository.existsByEmail(user.getEmail())) {
+        String email = (String) request.get("email");
+        String password = (String) request.get("password");
+        String role = (String) request.get("role");
+        String fullName = (String) request.get("fullName");
+        String phone = (String) request.get("phone");
+        String address = (String) request.get("address");
+
+        if (userRepository.existsByEmail(email)) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "User already exists"));
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRole(role);
         userRepository.save(user);
 
-        return ResponseEntity.ok(
-                Map.of("message", "User registered successfully")
-        );
+        UserProfileRequest profileRequest = new UserProfileRequest();
+        profileRequest.setEmail(email);
+        profileRequest.setRole(role);
+        profileRequest.setActive(true);
+        profileRequest.setFullName(fullName);
+        profileRequest.setPhone(phone);
+        profileRequest.setAddress(address);
+
+        userServiceClient.createUser(profileRequest);
+
+        return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }
+
+
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
 

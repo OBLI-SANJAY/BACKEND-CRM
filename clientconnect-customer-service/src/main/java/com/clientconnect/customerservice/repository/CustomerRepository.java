@@ -10,6 +10,7 @@ public interface CustomerRepository extends MongoRepository<Customer, String> {
     List<Customer> findByAssignedTo(String email);
 
     List<Customer> findByAssignedToAndNameContainingIgnoreCase(String email, String keyword);
-
     List<Customer> findByNameContainingIgnoreCase(String keyword);
+    List<Customer> findByAssignedToOrCreatedBy(String assignedTo, String createdBy);
+
 }

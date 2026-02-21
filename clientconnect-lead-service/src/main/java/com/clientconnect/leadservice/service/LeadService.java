@@ -16,14 +16,15 @@ public class LeadService {
         this.leadRepository = leadRepository;
     }
 
-    // 🔥 CREATE LEAD
+ 
     public Lead createLead(Lead lead, String role, String email) {
+    	
 
         if (role.equalsIgnoreCase("EMPLOYEE")) {
             throw new RuntimeException("Employees cannot create leads");
         }
 
-        // ADMIN creating lead
+      
         if (role.equalsIgnoreCase("ADMIN")) {
 
             if (lead.getAssignedTo() == null || lead.getAssignedTo().isEmpty()) {
@@ -45,6 +46,9 @@ public class LeadService {
         lead.setStage("NEW");
         lead.setCreatedAt(LocalDateTime.now());
         lead.setUpdatedAt(LocalDateTime.now());
+        lead.setCreatedBy(email);
+    	lead.setCreatedRole(role);
+
 
         return leadRepository.save(lead);
     }
@@ -56,14 +60,17 @@ public class LeadService {
             return leadRepository.findAll();
         }
 
-        if (role.equalsIgnoreCase("MANAGER") ||
-            role.equalsIgnoreCase("EMPLOYEE")) {
+        if (role.equalsIgnoreCase("MANAGER")) {
+            return leadRepository.findByAssignedToOrCreatedBy(email, email);
+        }
 
+        if (role.equalsIgnoreCase("EMPLOYEE")) {
             return leadRepository.findByAssignedTo(email);
         }
 
         throw new RuntimeException("Unauthorized role");
     }
+
     public Lead getLeadById(String id, String role, String email) {
 
         Lead lead = leadRepository.findById(id)

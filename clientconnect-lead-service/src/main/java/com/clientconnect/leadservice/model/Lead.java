@@ -21,10 +21,25 @@ public class Lead {
 
     private String assignedTo;      
     private String assignedBy;      
-    private String assignedRole;    
+    private String assignedRole;  
+    private String createdBy;
+    private String createdRole;
 
 
-    public String getAssignedBy() {
+
+    public String getCreatedBy() {
+		return createdBy;
+	}
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+	public String getCreatedRole() {
+		return createdRole;
+	}
+	public void setCreatedRole(String createdRole) {
+		this.createdRole = createdRole;
+	}
+	public String getAssignedBy() {
 		return assignedBy;
 	}
 	public void setAssignedBy(String assignedBy) {

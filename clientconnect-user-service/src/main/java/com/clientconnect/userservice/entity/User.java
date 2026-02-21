@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user_profiles")
 public class User {
 
     @Id
@@ -18,6 +18,36 @@ public class User {
     private String role;
     private boolean active;
 
+    public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public boolean isProfileCompleted() {
+		return profileCompleted;
+	}
+
+	public void setProfileCompleted(boolean profileCompleted) {
+		this.profileCompleted = profileCompleted;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	private String phone;
+    private String address;
+    private boolean profileCompleted;
     public User() {}
 
     public Long getId() { return id; }

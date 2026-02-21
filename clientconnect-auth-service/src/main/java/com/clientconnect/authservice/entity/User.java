@@ -16,8 +16,7 @@ public class User {
 
     private boolean active = true;
 
-    @Column(name = "full_name")
-    private String fullName;
+
 
     public User() {}
 
@@ -61,13 +60,6 @@ public class User {
 		this.active = active;
 	}
 
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
 
    
 }

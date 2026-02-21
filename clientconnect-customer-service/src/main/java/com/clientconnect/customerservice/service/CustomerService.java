@@ -53,12 +53,22 @@ public class CustomerService {
 
     public List<Customer> getCustomers(String email, String role) {
 
-        if (role.equals("ADMIN")) {
-            return repository.findAll();
-        }
+        switch (role) {
 
-        return repository.findByAssignedTo(email);
+            case "ADMIN":
+                return repository.findAll();
+
+            case "MANAGER":
+                return repository.findByAssignedToOrCreatedBy(email, email);
+
+            case "EMPLOYEE":
+                return repository.findByAssignedTo(email);
+
+            default:
+                throw new UnauthorizedException("Invalid role");
+        }
     }
+
 
     public Customer getCustomerById(String id,
                                     String email,
