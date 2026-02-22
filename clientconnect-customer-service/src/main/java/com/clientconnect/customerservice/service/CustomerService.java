@@ -2,6 +2,8 @@ package com.clientconnect.customerservice.service;
 
 import com.clientconnect.customerservice.dto.AssignRequest;
 import com.clientconnect.customerservice.dto.CustomerRequest;
+import com.clientconnect.customerservice.dto.UpdateCustomerRequest;
+import com.clientconnect.customerservice.dto.UpdateFinancialRequest;
 import com.clientconnect.customerservice.exception.ResourceNotFoundException;
 import com.clientconnect.customerservice.exception.UnauthorizedException;
 import com.clientconnect.customerservice.model.Customer;
@@ -127,4 +129,83 @@ public class CustomerService {
 
         repository.delete(customer);
     }
+    
+    public Customer updateFinancialDetails(String id,
+            UpdateFinancialRequest request,
+            String email,
+            String role) {
+
+Customer customer = repository.findById(id)
+.orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+if (!role.equals("ADMIN") && !role.equals("MANAGER")) {
+throw new UnauthorizedException("Not authorized to update financial details");
+}
+if (role.equals("MANAGER") && 
+!customer.getAssignedTo().equals(email)) {
+throw new UnauthorizedException("Not your customer");
+}
+
+customer.setTotalProduct(request.getTotalProduct());
+customer.setTotalCost(request.getTotalCost());
+customer.setAmountPaid(request.getAmountPaid());
+double remaining = request.getTotalCost() - request.getAmountPaid();
+customer.setRemainingDue(remaining);
+
+
+if (remaining <= 0) {
+customer.setPaymentStatus("PAID");
+} else if (request.getAmountPaid() > 0) {
+customer.setPaymentStatus("PARTIAL");
+} else {
+customer.setPaymentStatus("PENDING");
+}
+
+customer.setUpdatedAt(LocalDateTime.now());
+
+return repository.save(customer);
+}
+    public Customer updateCustomerDetails(String id,
+            UpdateCustomerRequest request,
+            String email,
+            String role) {
+
+        Customer customer = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+
+        if (!role.equals("ADMIN") && !role.equals("MANAGER")) {
+            throw new UnauthorizedException("Not authorized to edit customer");
+        }
+
+        if (role.equals("MANAGER") &&
+                !customer.getAssignedTo().equals(email)) {
+            throw new UnauthorizedException("Not your customer");
+        }
+
+        // Basic fields
+        customer.setName(request.getName());
+        customer.setEmail(request.getEmail());
+        customer.setPhone(request.getPhone());
+        customer.setCompany(request.getCompany());
+
+        // Financial fields
+        customer.setTotalProduct(request.getTotalProduct());
+        customer.setTotalCost(request.getTotalCost());
+        customer.setAmountPaid(request.getAmountPaid());
+
+        double remaining = request.getTotalCost() - request.getAmountPaid();
+        customer.setRemainingDue(remaining);
+
+        if (remaining <= 0) {
+            customer.setPaymentStatus("PAID");
+        } else if (request.getAmountPaid() > 0) {
+            customer.setPaymentStatus("PARTIAL");
+        } else {
+            customer.setPaymentStatus("PENDING");
+        }
+
+        customer.setUpdatedAt(LocalDateTime.now());
+
+        return repository.save(customer);
+    }
+
 }

@@ -2,6 +2,8 @@ package com.clientconnect.customerservice.controller;
 
 import com.clientconnect.customerservice.dto.AssignRequest;
 import com.clientconnect.customerservice.dto.CustomerRequest;
+import com.clientconnect.customerservice.dto.UpdateCustomerRequest;
+import com.clientconnect.customerservice.dto.UpdateFinancialRequest;
 import com.clientconnect.customerservice.model.Customer;
 import com.clientconnect.customerservice.service.CustomerService;
 import org.springframework.web.bind.annotation.*;
@@ -62,4 +64,23 @@ public class CustomerController {
         service.deleteCustomer(id, role);
         return "Customer deleted successfully";
     }
+    @PatchMapping("/{id}/financial")
+    public Customer updateFinancialDetails(
+            @PathVariable String id,
+            @RequestBody UpdateFinancialRequest request,
+            @RequestHeader("X-User-Email") String email,
+            @RequestHeader("X-User-Role") String role) {
+
+        return service.updateFinancialDetails(id, request, email, role);
+    }
+    @PutMapping("/{id}")
+    public Customer updateCustomerDetails(
+            @PathVariable String id,
+            @RequestBody UpdateCustomerRequest request,
+            @RequestHeader("X-User-Email") String email,
+            @RequestHeader("X-User-Role") String role) {
+
+        return service.updateCustomerDetails(id, request, email, role);
+    }
+
 }

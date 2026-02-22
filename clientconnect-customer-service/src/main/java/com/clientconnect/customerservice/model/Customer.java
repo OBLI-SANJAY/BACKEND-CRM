@@ -25,6 +25,42 @@ public class Customer {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    
+    private int totalProduct;
+    private double totalCost;
+    private double amountPaid;
+    private double remainingDue;
+    private String paymentStatus;
+	public int getTotalProduct() {
+		return totalProduct;
+	}
+	public void setTotalProduct(int totalProduct) {
+		this.totalProduct = totalProduct;
+	}
+	public double getTotalCost() {
+		return totalCost;
+	}
+	public void setTotalCost(double totalCost) {
+		this.totalCost = totalCost;
+	}
+	public double getAmountPaid() {
+		return amountPaid;
+	}
+	public void setAmountPaid(double amountPaid) {
+		this.amountPaid = amountPaid;
+	}
+	public double getRemainingDue() {
+		return remainingDue;
+	}
+	public void setRemainingDue(double remainingDue) {
+		this.remainingDue = remainingDue;
+	}
+	public String getPaymentStatus() {
+		return paymentStatus;
+	}
+	public void setPaymentStatus(String paymentStatus) {
+		this.paymentStatus = paymentStatus;
+	}
 	public String getId() {
 		return id;
 	}
