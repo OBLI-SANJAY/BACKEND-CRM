@@ -17,8 +17,18 @@ public class User {
     private String email;
     private String role;
     private boolean active;
+    @Column(name = "created_by")
+    private String createdBy;
 
-    public String getPhone() {
+    public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public String getPhone() {
 		return phone;
 	}
 

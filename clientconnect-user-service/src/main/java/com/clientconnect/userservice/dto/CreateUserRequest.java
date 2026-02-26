@@ -5,12 +5,21 @@ public class CreateUserRequest {
     private String email;
     private String role;
     private boolean active;
-
     private String fullName;
     private String phone;
     private String address;
+    private String createdBy;
 
   
+
+    public CreateUserRequest() {}
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
     public String getEmail() {
         return email;

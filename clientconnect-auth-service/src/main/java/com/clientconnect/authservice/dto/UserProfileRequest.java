@@ -8,6 +8,15 @@ public class UserProfileRequest {
     private String fullName;
     private String phone;
     private String address;
+    private String createdBy;
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
 	public String getFullName() {
 		return fullName;

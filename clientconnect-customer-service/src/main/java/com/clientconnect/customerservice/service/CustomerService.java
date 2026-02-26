@@ -73,19 +73,24 @@ public class CustomerService {
 
 
     public Customer getCustomerById(String id,
-                                    String email,
-                                    String role) {
+            String email,
+            String role) {
 
-        Customer customer = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+Customer customer = repository.findById(id)
+.orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+if (role.equals("ADMIN")) {
+return customer;
+}
+if (role.equals("MANAGER")) {
+return customer;
+}
+if (role.equals("EMPLOYEE") &&
+customer.getAssignedTo().equals(email)) {
+return customer;
+}
 
-        if (!role.equals("ADMIN") &&
-                !customer.getAssignedTo().equals(email)) {
-            throw new UnauthorizedException("Access denied");
-        }
-
-        return customer;
-    }
+throw new UnauthorizedException("Access denied");
+}
 
     public Customer assignCustomer(String id,
                                    AssignRequest request,
@@ -177,17 +182,13 @@ return repository.save(customer);
         }
 
         if (role.equals("MANAGER") &&
-                !customer.getAssignedTo().equals(email)) {
+                !customer.getCreatedBy().equals(email)) {
             throw new UnauthorizedException("Not your customer");
         }
-
-        // Basic fields
         customer.setName(request.getName());
         customer.setEmail(request.getEmail());
         customer.setPhone(request.getPhone());
         customer.setCompany(request.getCompany());
-
-        // Financial fields
         customer.setTotalProduct(request.getTotalProduct());
         customer.setTotalCost(request.getTotalCost());
         customer.setAmountPaid(request.getAmountPaid());

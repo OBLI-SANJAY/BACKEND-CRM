@@ -59,7 +59,10 @@ this.userServiceClient = userServiceClient;
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> register(
+            @RequestBody Map<String, Object> request,
+            @RequestHeader(value = "X-User-Role", required = false) String creatorRole,
+            @RequestHeader(value = "X-User-Email", required = false) String creatorEmail) {
 
         String email = (String) request.get("email");
         String password = (String) request.get("password");
@@ -74,21 +77,37 @@ this.userServiceClient = userServiceClient;
                     .body(Map.of("message", "User already exists"));
         }
 
+        // Save auth credentials
         User user = new User();
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(role);
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        UserProfileRequest profileRequest = new UserProfileRequest();
-        profileRequest.setEmail(email);
-        profileRequest.setRole(role);
-        profileRequest.setActive(true);
-        profileRequest.setFullName(fullName);
-        profileRequest.setPhone(phone);
-        profileRequest.setAddress(address);
+        try {
+            UserProfileRequest profileRequest = new UserProfileRequest();
+            profileRequest.setEmail(email);
+            profileRequest.setRole(role);
+            profileRequest.setActive(true);
+            profileRequest.setFullName(fullName);
+            profileRequest.setPhone(phone);
+            profileRequest.setAddress(address);
+            if ("MANAGER".equals(creatorRole) && "EMPLOYEE".equals(role)) {
+                profileRequest.setCreatedBy(creatorEmail);
+            } else {
+                profileRequest.setCreatedBy(null);
+            }
 
-        userServiceClient.createUser(profileRequest);
+            userServiceClient.createUser(profileRequest);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            userRepository.delete(savedUser);
+
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Registration failed: user profile could not be created."));
+        }
 
         return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }

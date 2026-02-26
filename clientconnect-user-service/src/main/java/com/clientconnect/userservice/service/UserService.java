@@ -53,5 +53,7 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
-
+    public List<User> getEmployeesCreatedBy(String managerEmail) {
+        return userRepository.findByCreatedBy(managerEmail);
+    }
 }

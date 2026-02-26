@@ -88,8 +88,9 @@ public class TaskService {
 
     public void deleteTask(String id, String role) {
 
-        if (!role.equals("ADMIN")) {
-            throw new UnauthorizedException("Only admin can delete");
+    	   if (!role.equalsIgnoreCase("ADMIN") &&
+    		        !role.equalsIgnoreCase("MANAGER")) {
+            throw new UnauthorizedException("Only admin or manager can delete");
         }
 
         repository.deleteById(id);
